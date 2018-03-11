@@ -1,0 +1,12 @@
+*.aux
+*.blg
+*.log
+*.out
+*.gz
+*.toc
+*.nav
+*.snm
+*.pdf
+*.DS_Store
+*.RData
+*.Rapp.history
