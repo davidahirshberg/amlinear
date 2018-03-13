@@ -1,2 +1,2 @@
-# aml
+# amlinear
 Augmented minimax linear estimation

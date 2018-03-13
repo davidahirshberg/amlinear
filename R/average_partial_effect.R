@@ -39,11 +39,15 @@ average_partial_effect = function(X, Y, W,
     }
     
     # Compute regression adjustment
-    if (fit.method = "none") {
+    if (fit.method == "none") {
         y.hat = rep(0, length(Y))
+        w.hat = NULL
         tau.hat = rep(0, length(Y))
-    } else if (fit.method = "elnet") {
+    } else if (fit.method == "elnet") {
         lasso.out = rlasso(X, Y, W, alpha)
+        tau.hat = lasso.out$tau.hat
+        w.hat = lasso.out$w.hat
+        y.hat = lasso.out$y.hat + (W - w.hat) * lasso.out$tau.hat
     } else {
         stop("Unrecognized fitting method.")
     }
@@ -52,7 +56,7 @@ average_partial_effect = function(X, Y, W,
     if (balance.method == "minimax") {
         gamma = balance_minimax(X, W, zeta)
     } else if (balance.method == "plugin") {
-        gamma = balance_plugin(X, W, alpha)
+        gamma = balance_plugin(X, W, w.hat, alpha)
     } else {
         stop("Unrecognized balancing method.")
     }
