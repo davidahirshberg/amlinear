@@ -97,7 +97,16 @@ function (x, y, weights, offset = NULL, lambda = NULL, type.measure = c("mse",
   lambda.opt = as.numeric(obj[lambda.choice])
   cv.betas.list = lapply(outlist, function(elem) coef(elem, s = lambda.opt))
   cv.betas = Reduce(rbind, lapply(cv.betas.list, FUN=as.numeric))
+  
   obj[[length(obj) + 1]] = cv.betas
   names(obj)[length(obj)] = "cv.betas"
+  
+  obj[[length(obj) + 1]] = foldid
+  names(obj)[length(obj)] = "foldid"
+  
+  obj[[length(obj) + 1]] = x
+  names(obj)[length(obj)] = "x"
+  
   obj
+  
 }

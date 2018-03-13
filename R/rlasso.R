@@ -9,38 +9,40 @@
 rlasso = function(X, Y, W,
                   alpha = 1,
                   nfolds=NULL,
-                  lambda.choice=c("lambda.min", "lambda.1se")) {
+                  lambda.choice=c("lambda.1se", "lambda.min")) {
     
     lambda.choice = match.arg(lambda.choice)
-    
     
     nobs = nrow(X)
     pobs = ncol(X)
     
     if (is.null(nfolds)) {
-        nfolds = floor(max(3, min(10, sum(W==0)/5, sum(W==1)/5)))
+        nfolds = floor(max(3, min(10,length(W)/4)))
     }
     
     # fold ID for cross-validation; balance treatment assignments
     foldid = sample(rep(seq(nfolds), length = length(W)))
     
     y.fit = crossfit.cv.glmnet(X, Y, foldid = foldid, lambda.choice = lambda.choice, alpha = alpha)
-    y.hat = crossfit.predict(X, y.fit, foldid)
+    y.hat = crossfit.predict(y.fit)
     
     w.fit = crossfit.cv.glmnet(X, W, foldid = foldid, lambda.choice = lambda.choice, alpha = alpha)
-    w.hat = crossfit.predict(X, w.fit, foldid)
+    w.hat = crossfit.predict(w.fit)
     
     Y.tilde = Y - y.hat
-    X.tilde = (W - w.hat) * X
+    X.tilde = cbind(as.numeric(W - w.hat) * cbind(1, X))
+
+    tau.fit = crossfit.cv.glmnet(X.tilde, Y.tilde, foldid = foldid,
+                                 lambda.choice = lambda.choice, alpha = alpha,
+                                 penalty.factor = c(0, rep(1, pobs)))
+    tau.hat = crossfit.predict(tau.fit, cbind(1, X))
+    tau.beta = coef(tau.fit)[1 + 1:(1+p)]
     
-    tau.fit = crossfit.cv.glmnet(X.tilde, Y.tilde, foldid = foldid, lambda.choice = lambda.choice, alpha = alpha)
-    tau.hat = crossfit.predict(X, tau.fit, foldid)
-    
-    return(data.frame(tau.hat = tau.hat, y.hat = y.hat, w.hat = w.hat))
+    return(list(tau.hat = tau.hat, y.hat = y.hat, w.hat = w.hat, tau.beta = tau.beta))
 }
 
-crossfit.predict = function(X, lasso.obj, foldid) {
-    sapply(1:length(foldid), function(i) {
-        sum(lasso.obj$cv.betas[foldid[i],] * c(1, X[i,1]))
+crossfit.predict = function(lasso.obj, X = lasso.obj$x) {
+    sapply(1:length(lasso.obj$foldid), function(i) {
+        sum(lasso.obj$cv.betas[lasso.obj$foldid[i],] * c(1, X[i,]))
     })
 }

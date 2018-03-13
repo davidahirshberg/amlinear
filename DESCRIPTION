@@ -1,0 +1,12 @@
+Package: amlinear
+Title: Augmented Minmimax Linear Estimation
+Version: 0.0.0.9000
+Authors@R: person("David", "Hirshberg", email = "dah@stat.columbia.edu", role = c("aut")),
+           person("Stefan", "Wager", email = "swager@stanford.edu", role = c("aut", "cre"))
+Description: Augmented minimax linear estimation of average partial (or treatment) effects.
+Depends: R (>= 3.4.0)
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Imports: glmnet
+Suggests: testthat

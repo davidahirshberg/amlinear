@@ -6,5 +6,5 @@
 #' 
 #' @return balancing weights
 balance_minimax = function(X, W, zeta) {
-    
+    stop("Not yet implemented")
 }

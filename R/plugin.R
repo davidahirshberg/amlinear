@@ -6,5 +6,5 @@
 #' 
 #' @return balancing weights
 balance_plugin = function(X, W, zeta) {
-    
+    stop("Not yet implemented")
 }
