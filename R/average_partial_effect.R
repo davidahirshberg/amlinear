@@ -8,6 +8,7 @@
 #' @param fit.method the method used to fit mu(x, w) = E[Y | X = x, W = w]
 #' @param alpha tuning paramter for glmnet
 #' @param scale.X whether non-binary features should be noramlized
+#' @param solver convex optimzer used by CVXR for minimax weights
 #' @param verbose whether the optimizer should print progress information
 #'
 #' @return ATE estimate, along with standard error estimate
@@ -19,7 +20,8 @@ average_partial_effect = function(X, Y, W,
                                   fit.method = c("elnet", "none"),
                                   alpha=1,
                                   scale.X = TRUE,
-                                  verbose = FALSE) {
+                                  solver = c("ECOS", "SCS"),
+                                  verbose = TRUE) {
     
     balance.method = match.arg(balance.method)
     fit.method = match.arg(fit.method)
@@ -54,7 +56,7 @@ average_partial_effect = function(X, Y, W,
     
     # Compute balancing weights
     if (balance.method == "minimax") {
-        gamma = balance_minimax(X, W, zeta)
+        gamma = balance_minimax(X, W, zeta, solver = solver, verbose = verbose)
     } else if (balance.method == "plugin") {
         gamma = balance_plugin(X, W, w.hat, alpha)
     } else {
