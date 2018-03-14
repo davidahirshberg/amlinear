@@ -6,6 +6,8 @@
 #' @param alpha tuning paramter for glmnet
 #' 
 #' @return balancing weights
+#' 
+#' @export balance_plugin
 balance_plugin = function(X, W, w.hat = NULL, alpha = 1) {
     
     if (is.null(w.hat)) {

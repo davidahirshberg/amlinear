@@ -7,6 +7,8 @@
 #' @param verbose whether convex optimizer should print verbose output
 #' 
 #' @return balancing weights
+#' 
+#' @export balance_minimax
 balance_minimax = function(X, W, zeta, solver = c("ECOS", "SCS"), verbose = TRUE) {
     solver = match.arg(solver)
     nobs = nrow(X)

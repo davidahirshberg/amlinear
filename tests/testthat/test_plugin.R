@@ -1,3 +1,5 @@
+set.seed(1)
+
 p = 203
 n = 604
 
@@ -17,7 +19,7 @@ APE.plugin = average_partial_effect(X, Y, W, balance.method = "plugin")
 
 test_that("plugin estimator is accurate", {
     expect_equal(as.numeric(APE.plugin["point.estimate"]), mean(TAU), tolerance = 0.3)
-    expect_lt(abs(as.numeric(APE.plugin["point.estimate"]) - mean(TAU)), 3 * as.numeric(APE["standard.error.estimate"]))
+    expect_lt(abs(as.numeric(APE.plugin["point.estimate"]) - mean(TAU)), 3 * as.numeric(APE.plugin["standard.error.estimate"]))
 })
 
 

@@ -1,3 +1,5 @@
+set.seed(1)
+
 test_that("cross-fitting removes optimism", {
     
     p = 403
@@ -64,11 +66,6 @@ test_that("rlasso is accurate", {
     jj.beta.tau = jj.beta[c(2, 2 + p + 1:p)]
     jerror = mean((cbind(1, X) %*% (jj.beta.tau - beta.tau))^2)
     jerror.coef = sum((beta.tau - jj.beta.tau)^2)
-    
-    c(rerror, rerror.coef, jerror, jerror.coef)
-    
-    plot(jj.beta.tau)
-    plot(rr$tau.beta)
     
     expect_lt(rerror.coef / jerror.coef, 2)
     expect_lt(rerror / jerror, 2)

@@ -3,9 +3,11 @@
 #' @param X the input features
 #' @param Y the observed response (real valued)
 #' @param W the effect variable (real valued)
+#' @param alpha tuning parameter for the elastic net
 #' @param nfolds number of folds for cross-fitting
 #' @param lambda.choice how to cross-validated
-
+#'
+#' @export rlasso
 rlasso = function(X, Y, W,
                   alpha = 1,
                   nfolds=NULL,
@@ -36,7 +38,7 @@ rlasso = function(X, Y, W,
                                  lambda.choice = lambda.choice, alpha = alpha,
                                  penalty.factor = c(0, rep(1, pobs)))
     tau.hat = crossfit.predict(tau.fit, cbind(1, X))
-    tau.beta = coef(tau.fit)[1 + 1:(1+p)]
+    tau.beta = coef(tau.fit)[1 + 1:(1+pobs)]
     
     return(list(tau.hat = tau.hat, y.hat = y.hat, w.hat = w.hat, tau.beta = tau.beta))
 }
