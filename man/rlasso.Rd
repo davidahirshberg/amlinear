@@ -5,7 +5,7 @@
 \title{Estimate treatment effect via the R-lasso, as proposed by Nie and Wager (2017)}
 \usage{
 rlasso(X, Y, W, alpha = 1, nfolds = NULL, lambda.choice = c("lambda.1se",
-  "lambda.min"))
+  "lambda.min"), standardize = TRUE)
 }
 \arguments{
 \item{X}{the input features}
@@ -19,6 +19,8 @@ rlasso(X, Y, W, alpha = 1, nfolds = NULL, lambda.choice = c("lambda.1se",
 \item{nfolds}{number of folds for cross-fitting}
 
 \item{lambda.choice}{how to cross-validated}
+
+\item{standardize}{whether X should be rescaled before running the lasso}
 }
 \description{
 Estimate treatment effect via the R-lasso, as proposed by Nie and Wager (2017)

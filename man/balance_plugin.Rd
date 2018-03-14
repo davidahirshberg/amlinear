@@ -4,7 +4,7 @@
 \alias{balance_plugin}
 \title{Estimate plugin balancing weights}
 \usage{
-balance_plugin(X, W, w.hat = NULL, alpha = 1)
+balance_plugin(X, W, w.hat = NULL, alpha = 1, standardize = TRUE)
 }
 \arguments{
 \item{X}{the input features}
@@ -14,6 +14,8 @@ balance_plugin(X, W, w.hat = NULL, alpha = 1)
 \item{w.hat}{optional precomupted estimate of E[W | X]}
 
 \item{alpha}{tuning paramter for glmnet}
+
+\item{standardize}{whether X should be standardized for the lasso}
 }
 \value{
 balancing weights

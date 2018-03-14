@@ -5,8 +5,8 @@
 \title{Estimate average partial effect via augmented balancing}
 \usage{
 average_partial_effect(X, Y, W, balance.method = c("minimax", "plugin"),
-  zeta = 0.5, fit.method = c("elnet", "none"), alpha = 1,
-  scale.X = TRUE, solver = c("ECOS", "SCS"), verbose = TRUE)
+  zeta = 0.5, fitted.model = NULL, alpha = 1, standardize = TRUE,
+  solver = c("ECOS", "SCS"), verbose = TRUE)
 }
 \arguments{
 \item{X}{the input features}
@@ -19,18 +19,19 @@ average_partial_effect(X, Y, W, balance.method = c("minimax", "plugin"),
 
 \item{zeta}{tuning parameter for selecting approximately balancing weights}
 
-\item{fit.method}{the method used to fit mu(x, w) = E[Y | X = x, W = w]}
+\item{fitted.model}{optional pre-fitted regression adjustment}
 
 \item{alpha}{tuning paramter for glmnet}
 
-\item{scale.X}{whether non-binary features should be noramlized}
+\item{standardize}{whether non-binary features should be noramlized}
 
 \item{solver}{convex optimzer used by CVXR for minimax weights}
 
 \item{verbose}{whether the optimizer should print progress information}
 }
 \value{
-ATE estimate, along with standard error estimate
+ATE estimate with standard error estimate. Also returns ``linear''
+        point estimate of the form sum gamma_i Yi, as in Donoho (1994), for comparison.
 }
 \description{
 Estimate average partial effect via augmented balancing
