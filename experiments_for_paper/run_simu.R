@@ -17,12 +17,12 @@ if (setup == 1) {
         a = rowMeans(X[,1:k]) * sqrt(k)
         x = 2 * sign(a) * a^2
         tau = -0.2
-        w.mean = 1/(1 + exp(-x))
+        w.mean = pmax(0.05, pmin(1/(1 + exp(-x)), 0.95))
         mu = x - tau * (w.mean - 0.5)
         alpha = w.mean
         beta = (1 - w.mean)
         w.var = alpha * beta / (alpha + beta)^2 / (1 + alpha * beta)
-        w.fun = function(nn) rbeta(nn, alpha, beta)
+        w.fun = function() rbeta(nrow(X), alpha, beta)
         list(mu=mu, tau=tau, w.mean=w.mean, w.var=w.var, w.fun=w.fun, sigma.mult = 1, ape = -0.2)
     }
     
@@ -34,7 +34,7 @@ if (setup == 1) {
         mu = sign(pr) * sqrt(abs(pr)) / 2
         w.mean = mu
         w.var = mu^2
-        w.fun = function() w.mean * (1 + rnorm(nrow(X)))
+        w.fun = function() (0.01 + w.mean) * (1 + rnorm(nrow(X)))
         tau = pmax(X[,1] + X[,2], 0)/ 2
         list(mu=mu, tau=tau, w.mean=w.mean, w.var=w.var, w.fun=w.fun, sigma.mult = 1, ape = 0.5 / sqrt(pi))
     }

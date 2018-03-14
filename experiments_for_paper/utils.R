@@ -91,7 +91,7 @@ ape.comparison = function(X, Y, W, order=NULL, gamma.oracle = rep(1, length(W)))
 	
     if(is.null(order)) { 
 		order = 1
-		dd = min(2000, nrow(X) - ncol(X))
+		dd = min(1000, nrow(X) - ncol(X))
 		while (dd > 0 & order < 10) {
 			order = order + 1
 			dd = dd - choose(ncol(X) - 1 + order, order)
@@ -100,7 +100,7 @@ ape.comparison = function(X, Y, W, order=NULL, gamma.oracle = rep(1, length(W)))
 	B = generate.basis(X, order)
 	
 	# pre-compute regression adjustment once, then re-use it for different methods
-	lasso.out = rlasso(X, Y, W, standardize = FALSE)
+	lasso.out = rlasso(B, Y, W, standardize = FALSE)
 	tau.hat = lasso.out$tau.hat
 	w.hat = lasso.out$w.hat
 	y.hat = lasso.out$y.hat + (W - w.hat) * lasso.out$tau.hat
@@ -111,8 +111,7 @@ ape.comparison = function(X, Y, W, order=NULL, gamma.oracle = rep(1, length(W)))
 	propensity.strata.10 = model.matrix(~cut(w.rank, breaks = (0:10) / 10))
 	propensity.strata.20 = model.matrix(~cut(w.rank, breaks = (0:20) / 20))
 	B.tree = make.tree.basis(X, Y, num.tree = 5)
-	min.count = pmin(colSums(B.tree[W==0,]), colSums(B.tree[W==1,]))
-	B.tree.nonpure = B.tree[, min.count >= 10]
+	B.tree.nonpure = B.tree[, colSums(B.tree) >= 40]
 	B.dyad = dyadic.basis(X, W, 1.1 * nrow(X) / 2^(floor(log(nrow(X)) / log(2 * ncol(X)))))
 	B.plus = cbind(B, B.dyad/2, B.tree.nonpure/2, propensity.strata.5, propensity.strata.10, propensity.strata.20)
 	
@@ -125,8 +124,8 @@ ape.comparison = function(X, Y, W, order=NULL, gamma.oracle = rep(1, length(W)))
 	
 	# feasible estimates
 	ape.plugin = average_partial_effect(B, Y, W, balance.method = "plugin", fitted.model = lasso.out, verbose = FALSE, standardize = FALSE)
-	ape.minimax = average_partial_effect(B, Y, W, balance.method = "minimax", fitted.model = lasso.out, verbose = FALSE, standardize = FALSE)
-	ape.minimax.plus = average_partial_effect(B.plus, Y, W, balance.method = "minimax", fitted.model = lasso.out, verbose = FALSE, standardize = FALSE)
+	ape.minimax = average_partial_effect(B, Y, W, balance.method = "minimax", fitted.model = lasso.out, verbose = TRUE, standardize = FALSE)
+	ape.minimax.plus = average_partial_effect(B.plus, Y, W, balance.method = "minimax", fitted.model = lasso.out, verbose = TRUE, standardize = FALSE)
 	
 	c(oracle=ape.oracle, plugin=ape.plugin, minimax=ape.minimax, minimax.plus=ape.minimax.plus)
 }
