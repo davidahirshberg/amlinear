@@ -28,13 +28,13 @@ if (setup == 1) {
     
 } else if (setup == 2) {
     
-    k = k - 1
+    k = k - 2
     get.params = function(X, k) {
-        pr = apply(2 * X[,1:k], 1, prod)
+        pr = apply(2 * X[,1:k,drop=FALSE], 1, prod)
         mu = sign(pr) * sqrt(abs(pr)) / 2
         w.mean = mu
         w.var = mu^2
-        w.fun = function() (0.01 + w.mean) * (1 + rnorm(nrow(X)))
+        w.fun = function() (0.1 + w.mean) * (1 + rnorm(nrow(X)))
         tau = pmax(X[,1] + X[,2], 0)/ 2
         list(mu=mu, tau=tau, w.mean=w.mean, w.var=w.var, w.fun=w.fun, sigma.mult = 1, ape = 0.5 / sqrt(pi))
     }
@@ -43,7 +43,7 @@ if (setup == 1) {
     
     get.params = function(X, k) {
         tau = 4 * (1 - rowMeans(cos(pi * X[,1:k] / 2)))^2
-        prob = 0.5 + tau^2
+        prob = 1 + tau^2
         mu = 4 * rowMeans(X)
         w.fun = function() rpois(nrow(X), lambda = prob)
         list(mu=mu, tau=tau, w.mean=prob, w.var=prob, w.fun=w.fun, sigma.mult = 1, ape = 2.85)
