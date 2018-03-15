@@ -103,7 +103,7 @@ ape.comparison = function(X, Y, W, order=NULL, gamma.oracle = rep(1, length(W)))
 	lasso.out = rlasso(B, Y, W, standardize = FALSE)
 	tau.hat = lasso.out$tau.hat
 	w.hat = lasso.out$w.hat
-	y.hat = lasso.out$y.hat + (W - w.hat) * lasso.out$tau.hat
+	m.hat = lasso.out$y.hat + (W - w.hat) * lasso.out$tau.hat
 	
 	# make some more things to balance on
 	w.rank = rank(w.hat) / (1 + length(w.hat))
@@ -116,8 +116,8 @@ ape.comparison = function(X, Y, W, order=NULL, gamma.oracle = rep(1, length(W)))
 	B.plus = cbind(B, B.dyad/2, B.tree.nonpure/2, propensity.strata.5, propensity.strata.10, propensity.strata.20)
 	
 	# oracle estimate
-	point.estimate = mean(tau.hat + gamma.oracle * (Y - y.hat))
-	Vhat.oracle = mean((tau.hat - point.estimate)^2 + gamma.oracle^2 * (Y - y.hat)^2)
+	point.estimate = mean(tau.hat + gamma.oracle * (Y - m.hat))
+	Vhat.oracle = mean((tau.hat - point.estimate)^2 + gamma.oracle^2 * (Y - m.hat)^2)
 	standard.error.estimate = sqrt(Vhat.oracle / length(W))
 	linear.point.estimate = mean(gamma.oracle * Y)
 	ape.oracle = c(point.estimate=point.estimate, standard.error.estimate=standard.error.estimate, linear.point.estimate=linear.point.estimate)

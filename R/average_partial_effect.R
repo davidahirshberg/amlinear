@@ -43,7 +43,6 @@ average_partial_effect = function(X, Y, W,
     }
     tau.hat = lasso.out$tau.hat
     w.hat = lasso.out$w.hat
-    y.hat = lasso.out$y.hat + (W - w.hat) * lasso.out$tau.hat
     
     # Compute balancing weights
     if (balance.method == "minimax") {
@@ -55,8 +54,9 @@ average_partial_effect = function(X, Y, W,
     }
     
     # Compute point estimate and standard errors
-    point.estimate = mean(tau.hat + gamma * (Y - y.hat))
-    Vhat = mean((tau.hat - point.estimate)^2 + gamma^2 * (Y - y.hat)^2)
+    m.hat = lasso.out$y.hat + (W - lasso.out$w.hat) * lasso.out$tau.hat
+    point.estimate = mean(tau.hat + gamma * (Y - m.hat))
+    Vhat = mean((tau.hat - point.estimate)^2 + gamma^2 * (Y - m.hat)^2)
     standard.error.estimate = sqrt(Vhat / length(W))
     ret = c(point.estimate=point.estimate,
             standard.error.estimate=standard.error.estimate,

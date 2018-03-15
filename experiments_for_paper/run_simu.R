@@ -15,7 +15,7 @@ if (setup == 1) {
     
     get.params = function(X, k) {
         a = rowMeans(X[,1:k]) * sqrt(k)
-        x = 2 * sign(a) * a^2
+        x = sign(a) * a^2
         tau = -0.2
         w.mean = pmax(0.05, pmin(1/(1 + exp(-x)), 0.95))
         mu = x - tau * (w.mean - 0.5)
@@ -42,9 +42,9 @@ if (setup == 1) {
 } else if (setup == 3) {
     
     get.params = function(X, k) {
-        tau = 4 * (1 - rowMeans(cos(pi * X[,1:k] / 2)))^2
-        prob = 1 + tau^2
-        mu = 4 * rowMeans(X)
+        tau = rowMeans(cos(pi * X[,1:k] / 2)^2)
+        prob = 0.2 + tau^2
+        mu = 4 * (2 * rowMeans(X) + prob)
         w.fun = function() rpois(nrow(X), lambda = prob)
         list(mu=mu, tau=tau, w.mean=prob, w.var=prob, w.fun=w.fun, sigma.mult = 1, ape = 2.85)
     }
@@ -56,11 +56,11 @@ if (setup == 1) {
         tau = sin(2 * pi * X[,1])
         rowm = rowMeans(X[,1:k]* sqrt(k))
         ln.mu = 1 / (1 + exp(-sign(rowm) * rowm^2))
-        ln.sigma = 1
+        ln.sigma = 1/3
         w.mean = exp(ln.mu + ln.sigma^2/2)
         w.var = (exp(ln.sigma^2) - 1) * w.mean^2
         w.fun = function() exp(ln.mu + ln.sigma * rnorm(nrow(X)))
-        mu = pmax(0, rowm)
+        mu = pmax(0, 2 * rowm)
         list(mu=mu, tau=tau, w.mean=w.mean, w.var=w.var, w.fun=w.fun, sigma.mult = 1, ape = 0)
     }
     
