@@ -42,11 +42,11 @@ if (setup == 1) {
 } else if (setup == 3) {
     
     get.params = function(X, k) {
-        tau = rowMeans(cos(pi * X[,1:k] / 2)^2)
+        tau = rowMeans(cos(pi * X[,1:k] / 3))
         prob = 0.2 + tau^2
-        mu = 4 * (2 * rowMeans(X) + prob)
+        mu = 4 * rowMeans(X) + 2 * prob
         w.fun = function() rpois(nrow(X), lambda = prob)
-        list(mu=mu, tau=tau, w.mean=prob, w.var=prob, w.fun=w.fun, sigma.mult = 1, ape = 2.85)
+        list(mu=mu, tau=tau, w.mean=prob, w.var=prob, w.fun=w.fun, sigma.mult = 1, ape = 0.58)
     }
     
 } else if (setup == 4) {
@@ -88,5 +88,5 @@ results = Reduce(rbind, results.list)
 fnm = paste("results/output", setup, n, p, sigma, k, NREP, "full.csv", sep="-")
 write.csv(results, file=fnm)
 
-print(colMeans(results))
+print(colMeans(results^2))
 print(colMeans((results - results[1,1])^2))
