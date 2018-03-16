@@ -32,9 +32,9 @@ if (setup == 1) {
     get.params = function(X, k) {
         pr = apply(2 * X[,1:k,drop=FALSE], 1, prod)
         mu = sign(pr) * sqrt(abs(pr)) / 2
-        w.mean = mu
-        w.var = mu^2
-        w.fun = function() (0.1 + w.mean) * (1 + rnorm(nrow(X)))
+        w.mean = 0.1 + mu
+        w.var = w.mean^2
+        w.fun = function() w.mean * (1 + rnorm(nrow(X)))
         tau = pmax(X[,1] + X[,2], 0)/ 2
         list(mu=mu, tau=tau, w.mean=w.mean, w.var=w.var, w.fun=w.fun, sigma.mult = 1, ape = 0.5 / sqrt(pi))
     }
