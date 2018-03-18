@@ -3,16 +3,15 @@ rm(list = ls())
 library(xtable)
 filenames = list.files("results", pattern="*", full.names=TRUE)
 
-nms0 = c("raw", "oracle IPW", "LRB", "DML", "TMLE", "DML.ROB", "TMLE.ROB", "LRB.SIMPLE")
-nms = c(paste("L1", nms0), paste("BART", nms0))
-param.names = c("setup", "n", "p", "sigma", "spar")
-
+new.setup.order = c(2, 3, 4, 1)
+param.names = c("setup.neworder", "setup", "n", "p", "sigma", "spar")
 nms = c("plugin", "minimax", "minimax.plus", "oracle")
 
 raw = data.frame(t(sapply(filenames, function(fnm) {
 	
 	output = read.csv(fnm)[,-1]
 	params = strsplit(fnm, "-")[[1]][2:6]
+	params = c(new.setup.order[as.numeric(params[1])], params)
 	
 	ape = mean(output[,2])
 	err = output[, c("plugin.point.estimate",
@@ -62,17 +61,18 @@ raw = data.frame(apply(raw, 1:2, as.character))
 
 raw = raw[order(as.numeric(raw$p)),]
 raw = raw[order(as.numeric(raw$n)),]
-raw = raw[order(raw$setup),]
+raw = raw[order(raw$setup.neworder),]
 rownames(raw) = 1:nrow(raw)
 
 write.csv(raw, file="output.csv")
 
-tab.all = raw[,c(2, 3, 5, 6, 10, 14, 7, 11, 15, 8, 12, 16, 9, 13, 17)]
-rmse.idx = c(5, 8, 11) - 1
+tab.all = cbind("", raw[,1 + c(2, 3, 5, 6, 10, 14, 7, 11, 15, 8, 12, 16, 9, 13, 17)])
+rmse.idx = c(5, 8, 11)
 for(iter in 1:nrow(tab.all)) {
 	best.idx = rmse.idx[which(as.numeric(tab.all[iter,rmse.idx]) == min(as.numeric(tab.all[iter,rmse.idx])))]
 	tab.all[iter,best.idx] = paste("\\bf", tab.all[iter,best.idx])
 }
 
-xtab.all = xtable(tab.all, align=c("r", "|", "|", rep("c", 3), "|", "|", rep("c", 3), "|", rep("c", 3), "|", rep("c", 3), "|", rep("c", 3)))
-print(xtab.all, include.rownames = FALSE, include.colnames = TRUE, sanitize.text.function = identity, hline.after = c(-1, -1, 0, 0, 4, 8, 8, 12, 16, 16, 20, 24, 24, 28, 32, 32), file = "simulation_results.tex")
+xtab.all = xtable(tab.all, align=c("r", "|", "|", "c", "|", rep("c", 3), "|", "|", rep("c", 3), "|", rep("c", 3), "|", rep("c", 3), "|", rep("c", 3)))
+print(xtab.all, include.rownames = FALSE, include.colnames = TRUE, sanitize.text.function = identity,
+      hline.after = c(-1, -1, 0, 8, 16, 24, 32, 32), file = "simulation_results.tex")
