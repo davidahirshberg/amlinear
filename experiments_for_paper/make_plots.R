@@ -67,7 +67,7 @@ plot(raw$minimax.rmse, raw$minimax.rlin, log = "xy",
 axis(1, at=c(0.1, 0.15, 0.2, 0.3, 0.4), labels=c(0.1, 0.15, 0.2, 0.3, 0.4))
 axis(2, at=c(0.1, 0.15, 0.2, 0.3, 0.4), labels=c(0.1, 0.15, 0.2, 0.3, 0.4))
 abline(0, 1, untf = TRUE, lwd = 2)
-abline(0, 1.25, untf = TRUE, lwd = 2, lty = 2)
+abline(0, sqrt(1.25), untf = TRUE, lwd = 2, lty = 2)
 legend("bottomright", sapply(1:4, function(xx)paste("setup", xx)), pch = 16, cex = 1.5, col = cols)
 par=pardef
 dev.off()
@@ -84,7 +84,7 @@ plot(raw$minimax.plus.rmse, raw$minimax.plus.rlin, log = "xy",
 axis(1, at=c(0.07, 0.1, 0.15, 0.2, 0.3, 0.4), labels=c(0.07, 0.1, 0.15, 0.2, 0.3, 0.4))
 axis(2, at=c(0.07, 0.1, 0.15, 0.2, 0.3, 0.4), labels=c(0.07, 0.1, 0.15, 0.2, 0.3, 0.4))
 abline(0, 1, untf = TRUE, lwd = 2)
-abline(0, 1.25, untf = TRUE, lwd = 2, lty = 2)
+abline(0, sqrt(1.25), untf = TRUE, lwd = 2, lty = 2)
 legend("bottomright", sapply(1:4, function(xx)paste("setup", xx)), pch = 16, cex = 1.5, col = cols)
 par=pardef
 dev.off()

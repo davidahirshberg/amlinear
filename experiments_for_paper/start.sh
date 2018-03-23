@@ -6,7 +6,7 @@ pvals=(6 12)
 sigmavals=(1)
 sparvals=(3 4)
 
-reps=40
+reps=200
 
 for ((i1=0; i1<${#setupvals[@]} ;i1++))
 do
