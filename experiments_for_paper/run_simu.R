@@ -21,7 +21,7 @@ if (setup == 1) {
         mu = x - tau * (w.mean - 0.5)
         alpha = w.mean
         beta = (1 - w.mean)
-        w.var = alpha * beta / (alpha + beta)^2 / (1 + alpha * beta)
+        w.var = alpha * beta / (alpha + beta)^2 / (1 + alpha + beta)
         w.fun = function() rbeta(nrow(X), alpha, beta)
         list(mu=mu, tau=tau, w.mean=w.mean, w.var=w.var, w.fun=w.fun, sigma.mult = 1, ape = -0.2)
     }
