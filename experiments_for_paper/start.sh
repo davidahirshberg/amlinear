@@ -1,7 +1,7 @@
 #! /bin/bash
 
-setupvals=(1 2 3 4)
-nvals=(600 1200)
+setupvals=(1)
+nvals=(1200)
 pvals=(6 12)
 sigmavals=(1)
 sparvals=(3 4)
