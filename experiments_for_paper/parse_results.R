@@ -3,7 +3,7 @@ rm(list = ls())
 library(xtable)
 filenames = list.files("results", pattern="*", full.names=TRUE)
 
-new.setup.order = c(2, 3, 4, 1)
+new.setup.order = c(1, 2, 3, 4)
 param.names = c("setup.neworder", "setup", "n", "p", "sigma", "spar")
 nms = c("plugin", "minimax", "minimax.plus", "oracle")
 
