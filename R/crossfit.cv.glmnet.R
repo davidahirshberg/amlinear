@@ -25,6 +25,8 @@ function (x, y, weights, offset = NULL, lambda = NULL, type.measure = c("mse",
   glmnet.object = glmnet(x, y, weights = weights, offset = offset, 
     lambda = lambda, ...)
   glmnet.object$call = glmnet.call
+  subclass=class(glmnet.object)[[1]]
+  type.measure=cvtype(type.measure,subclass)
   is.offset = glmnet.object$offset
 ###Next line is commented out so each call generates its own lambda sequence
 # lambda=glmnet.object$lambda
@@ -46,7 +48,8 @@ function (x, y, weights, offset = NULL, lambda = NULL, type.measure = c("mse",
     outlist = foreach(i = seq(nfolds), .packages = c("glmnet")) %dopar% 
     {
       which = foldid == i
-      if (is.matrix(y)) 
+      # if (is.matrix(y))
+      if (length(dim(y))>1) 
         y_sub = y[!which, ]
       else y_sub = y[!which]
       if (is.offset) 
@@ -71,7 +74,7 @@ function (x, y, weights, offset = NULL, lambda = NULL, type.measure = c("mse",
                weights = weights[!which], ...)
     }
   }
-  fun = paste("cv", class(glmnet.object)[[1]], sep = ".")
+  fun = paste("cv", subclass, sep = ".")
   lambda = glmnet.object$lambda
   cvstuff = do.call(fun, list(outlist, lambda, x, y, weights, 
     offset, foldid, type.measure, grouped, keep))
@@ -84,7 +87,8 @@ function (x, y, weights, offset = NULL, lambda = NULL, type.measure = c("mse",
     cvsd=cvsd[!nas]
     nz=nz[!nas]
   }
-  cvname = cvstuff$name
+  cvname = names(cvstuff$type.measure)
+  names(cvname)=cvstuff$type.measure# to be compatible with earlier version; silly, I know
   out = list(lambda = lambda, cvm = cvm, cvsd = cvsd, cvup = cvm + 
     cvsd, cvlo = cvm - cvsd, nzero = nz, name = cvname, glmnet.fit = glmnet.object)
   if (keep) 
@@ -108,5 +112,5 @@ function (x, y, weights, offset = NULL, lambda = NULL, type.measure = c("mse",
   names(obj)[length(obj)] = "x"
   
   obj
-  
 }
+
