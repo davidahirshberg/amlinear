@@ -1,12 +1,14 @@
 #! /bin/bash
 
-setupvals=(1)
-nvals=(1200)
+setupvals=(1 2 3 4)
+nvals=(200 400 800 1600)
 pvals=(6 12)
 sigmavals=(1)
 sparvals=(3 4)
+reps=100
 
-reps=200
+mkdir -p logging
+mkdir -p results
 
 for ((i1=0; i1<${#setupvals[@]} ;i1++))
 do
