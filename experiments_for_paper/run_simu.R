@@ -17,7 +17,7 @@ if (!sherlock) {
   p = sample(c(6, 12), 1)
   sigma = sample(c(1), 1)
   k = sample(c(3, 4), 1)
-  NREP = 10
+  NREP = 100
 }
 
 source("utils2.R")
@@ -38,9 +38,10 @@ results.list = lapply(1:NREP, function(iter) {
 })
 
 results = Reduce(rbind, results.list)
+results = cbind(results, setup, n, p, sigma, k)
 
 # Saves filename with random suffix bit a the end
-uniqstr = paste0(c(Sys.getenv(c('SLURM_JOB_ID', 'SLURM_LOCALID', 'SLURM_JOB_NAME')), sample(1e8, 1)), sep="")
+uniqstr = paste0(c(Sys.getenv(c('SLURM_JOB_ID', 'SLURM_LOCALID', 'SLURM_JOB_NAME'), sample(1e8, 1))), collapse="")
 fnm = paste("results/output", setup, n, p, sigma, k, NREP, "full", uniqstr, ".csv", sep="-")
 write.csv(results, file=fnm)
 
