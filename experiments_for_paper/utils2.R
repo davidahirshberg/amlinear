@@ -146,16 +146,7 @@ amle.cond.linear = function(Y, X, W, sigma,
 }
 
 
-sim.A = function(n,p=5){
-  X = matrix(runif(n*p, min=0, max=1), n, p)
-  b = sin(pi * X[,1] * X[,2]) + 2 * (X[,3] - 0.5)^2 + X[,4] + 0.5 * X[,5]
-  eta = 0.1
-  e = pmax(eta, pmin(sin(pi * X[,1] * X[,2]), 1-eta))
-  tau = (X[,1] + X[,2]) / 2
-  list(X=X, b=b, tau=tau, e=e)
-}
-
-ape.comparison = function(X, Y, W, order=NULL, gamma.oracle = rep(1, length(W))) {
+comparison = function(X, Y, W, order=NULL, gamma.oracle = rep(1, length(W))) {
     forest.tau = causal_forest(X,Y,W)
     forest.estimate = average_partial_effect(forest.tau)
     psi.forest = forest.estimate[[1]]
@@ -166,12 +157,12 @@ ape.comparison = function(X, Y, W, order=NULL, gamma.oracle = rep(1, length(W)))
     psi.oracle = mean(tau.hat + gamma.oracle * (Y - m.hat))
     attr(psi.oracle, 'se.sample') = sqrt(mean(gamma.oracle^2 * (Y - m.hat)^2)/length(Y))
 
-    estimates = list(
-		 oracle = psi.oracle,
-		 grf = psi.forest,
-		 deriv.noaug = amle.average.derivative(Y,X,W,1,1, crossfit.regression=crossfit.zero),
-		 deriv.forest = amle.average.derivative(Y,X,W,1,1, crossfit.regression=crossfit.causal.forest),
-		 clin.noaug = amle.cond.linear(Y,X,W,1,1, crossfit.regression=crossfit.zero),
-		 clin.forest = amle.cond.linear(Y,X,W,1,1, crossfit.regression=crossfit.causal.forest))
-    data.frame(estimator = names(estimates), estimate=sapply(estimates, c), se.sample = sapply(estimates, function(e)attr(e,'se.sample')))
+    estimates = list(psi.oracle, psi.forest,
+		     amle.average.derivative(Y,X,W,1,1, crossfit.regression=crossfit.zero),
+		     amle.average.derivative(Y,X,W,1,1, crossfit.regression=crossfit.causal.forest),
+		     amle.cond.linear(Y,X,W,1,1, crossfit.regression=crossfit.zero),
+		     amle.cond.linear(Y,X,W,1,1, crossfit.regression=crossfit.causal.forest))
+    weights = c('oracle', 'grf', 'deriv', 'deriv', 'clin', 'clin')
+    outcome = c('grf',    'grf', 'none',   'grf',  'none', 'grf')
+    data.frame(weights = weights, outcome = outcome, estimate=sapply(estimates, c), se.sample = sapply(estimates, function(e)attr(e,'se.sample')))
 }
