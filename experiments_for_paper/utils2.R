@@ -8,9 +8,11 @@ library(grf)
 # if derivative[j], provide basis for derivative of basis element
 get.basis = function(X, order, s, derivative=c()) {
   H = lapply(1:ncol(X), function(j) {
-    Hj = sapply(1:order, function(k) hermite(X[,j], k, prob = TRUE)) / sqrt(factorial(j))
-    if(j %in% derivative) { cbind(1, Hj[,1:(order-1)] %*% diag(2:order)) } 
-    else { Hj }
+    if(j %in% derivative) {
+	sapply(1:order, function(k) hermite(X[,j], k-1) * sqrt(k / factorial(k-1)))
+    } else {
+	sapply(1:order, function(k) hermite(X[,j], k) / sqrt(factorial(k)))
+    }
   })
   polys = lapply(0:order, function(r) {
     if (r == 0){
