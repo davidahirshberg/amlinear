@@ -8,5 +8,5 @@
 module load gmp
 module load mpfr
 module load R/3.6.1
-cd /home/users/vitorh/amlinear/experiments_for_paper/
+cd ~/amlinear/experiments_for_paper/
 R < run_simu.R --no-save
