@@ -2,20 +2,23 @@
 sherlock = nchar(Sys.getenv("GROUP_SCRATCH")) > 0
 
 if (!sherlock) {
+  print('running local')
   setup = 7
   n = 400
   p = 3
   sigma = 1
   k = 2
   NREP = 2
+  print(paste('running local', setup, n ,p, sigma, k, NREP))
 } else {
   setwd("~/amlinear/experiments_for_paper/")
   setup = sample(1:7, 1)
   n = sample(c(200, 400, 800, 1600), 1)
   p = sample(c(6, 12), 1)
   sigma = sample(c(1), 1)
-  k = sample(c(3, 4), 1)
-  NREP = 5
+  k = sample(c(3, 6), 1)
+  NREP = 10
+  print(paste('running on sherlock', setup, n ,p, sigma, k, NREP))
 }
 
 source("utils2.R")
