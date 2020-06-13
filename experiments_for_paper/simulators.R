@@ -27,9 +27,9 @@ simulators = list(
     },
     function(X, k, sigma) {
         tau = rowMeans(cos(pi * X[,1:k] / 3))
-        prob = 0.2 + tau^2
-        mu = 4 * rowMeans(X) + 2 * prob
-        w.fun = function() rpois(nrow(X), lambda = prob)
+        w.mean = 0.2 + tau^2
+        mu = 4 * rowMeans(X) + 2 * w.mean
+        w.fun = function() rpois(nrow(X), lambda = w.mean)
 	y.fun = function(W) mu + W * tau + sigma * rnorm(n)
 	oracle.fun = function(W) (W - w.mean) / w.var 
         list(w.fun=w.fun, y.fun = y.fun, oracle.fun = oracle.fun, psi = 0.58, cpsi = function(W) mean(tau), estimand='clin')
