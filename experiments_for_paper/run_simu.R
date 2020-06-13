@@ -17,7 +17,7 @@ if (!sherlock) {
   p = sample(c(6, 12), 1)
   sigma = sample(c(1), 1)
   k = sample(c(3, 4), 1)
-  NREP = 100
+  NREP = 5
 }
 
 source("utils2.R")
