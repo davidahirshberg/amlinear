@@ -1,14 +1,27 @@
 rm(list = ls())
+
+# Trick to check if we're on sherlock
+sherlock = nchar(Sys.getenv("GROUP_SCRATCH")) > 0
+
+if (!sherlock) {
+  setup = 1
+  n = 200
+  p = 3
+  sigma = 1
+  k = 2
+  NREP = 2
+} else {
+  setwd("/home/users/vitorh/amlinear/experiments_for_paper/")
+  setup = sample(c(1, 2, 3, 4), 1)
+  n = sample(c(200, 400, 800, 1600), 1)
+  p = sample(c(6, 12), 1)
+  sigma = sample(c(1), 1)
+  k = sample(c(3, 4), 1)
+  NREP = 10
+}
+
 source("utils2.R")
 source("simulators.R")
-
-args=(commandArgs(TRUE))
-setup = as.numeric(args[1])
-n = as.numeric(args[2])
-p = as.numeric(args[3])
-sigma = as.numeric(args[4])
-k = as.numeric(args[5])
-NREP = as.numeric(args[6])
 
 results.list = lapply(1:NREP, function(iter) {
     X = matrix(rnorm(n*p), n, p)
@@ -26,8 +39,8 @@ results.list = lapply(1:NREP, function(iter) {
 
 results = Reduce(rbind, results.list)
 
-fnm = paste("results/output", setup, n, p, sigma, k, NREP, "full.csv", sep="-")
+# Saves filename with random suffix bit a the end
+uniqstr = paste0(c(Sys.getenv(c('SLURM_JOB_ID', 'SLURM_LOCALID', 'SLURM_JOB_NAME')), sample(1e8, 1)), sep="")
+fnm = paste("results/output", setup, n, p, sigma, k, NREP, "full", uniqstr, ".csv", sep="-")
 write.csv(results, file=fnm)
 
-print(colMeans(results^2))
-print(colMeans((results - results[1,1])^2))
