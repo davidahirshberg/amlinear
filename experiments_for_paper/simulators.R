@@ -31,7 +31,7 @@ simulators = list(
         mu = 4 * rowMeans(X) + 2 * prob
         w.fun = function() rpois(nrow(X), lambda = prob)
 	y.fun = function(W) mu + W * tau + sigma * rnorm(n)
-	oracle.fun = function(W) params(W - w.mean) / w.var 
+	oracle.fun = function(W) (W - w.mean) / w.var 
         list(w.fun=w.fun, y.fun = y.fun, oracle.fun = oracle.fun, psi = 0.58, cpsi = function(W) mean(tau), estimand='clin')
     },
     function(X, k, sigma) {
@@ -45,7 +45,7 @@ simulators = list(
         mu = pmax(0, 2 * rowm)
         w.fun = function() exp(ln.mu + ln.sigma * rnorm(nrow(X)))
 	y.fun = function(W) mu + W * tau + sigma * rnorm(n)
-	oracle.fun = function(W) params(W - w.mean) / w.var 
+	oracle.fun = function(W) (W - w.mean) / w.var 
         list(w.fun=w.fun, y.fun = y.fun, oracle.fun = oracle.fun, psi = 0, cpsi = function(W) mean(tau), estimand='clin')
     },
     function(X, k, sigma) {
