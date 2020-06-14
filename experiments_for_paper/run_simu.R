@@ -9,8 +9,9 @@ if (!sherlock) {
   sigma = 1
   k = 2
   NREP = 2
-  print(paste('running local', setup, n ,p, sigma, k, NREP))
+  print(paste('running local', setup, n ,p, k, sigma, NREP))
 } else {
+  set.seed(as.numeric(Sys.getenv("SLURM_JOB_ID")))
   setwd("~/amlinear/experiments_for_paper/")
   setup = sample(1:7, 1)
   n = sample(c(200, 400, 800, 1600), 1)
@@ -18,8 +19,14 @@ if (!sherlock) {
   sigma = sample(c(1), 1)
   k = sample(c(3, 6), 1)
   NREP = 10
-  print(paste('running on sherlock', setup, n ,p, sigma, k, NREP))
+  print(paste('running on sherlock', setup, n ,p, k, sigma, NREP))
 }
+
+# results filename, which uses a random suffix bit
+# check for existence of results file
+uniqstr = paste0(c(Sys.getenv(c('SLURM_JOB_ID', 'SLURM_JOB_NAME'))), collapse="")
+fnm = paste("results/", uniqstr, ".csv",  sep="")
+if(file.exists(fnm)) { stop('done'); }
 
 source("utils2.R")
 source("simulators.R")
@@ -39,9 +46,5 @@ results.list = lapply(1:NREP, function(iter) {
 
 results = Reduce(rbind, results.list)
 results = cbind(results, setup, n, p, sigma, k)
-
-# Saves filename with random suffix bit a the end
-uniqstr = paste0(c(Sys.getenv(c('SLURM_JOB_ID', 'SLURM_LOCALID', 'SLURM_JOB_NAME'), sample(1e8, 1))), collapse="")
-fnm = paste("results/", uniqstr, ".csv",  sep="")
 write.csv(results, file=fnm)
 
