@@ -11,7 +11,7 @@ simulators = list(
         w.fun = function() rbeta(nrow(X), alpha, beta)
 	y.fun = function(W) mu + W * tau + sigma * rnorm(n)
 	oracle.fun = function(W) (W - w.mean) / w.var 
-        list(w.fun=w.fun, y.fun = y.fun, oracle.fun = oracle.fun, psi = 0.58, cpsi = function(W) mean(tau), estimand='clin')
+        list(w.fun=w.fun, y.fun = y.fun, oracle.fun = oracle.fun, psi = -0.2, cpsi = function(W) mean(tau), estimand='clin')
     },
     function(X, k, sigma) {
 	k = k - 2
@@ -23,7 +23,7 @@ simulators = list(
         tau = pmax(X[,1] + X[,2], 0)/ 2
 	y.fun = function(W) mu + W * tau + sigma * rnorm(n)
 	oracle.fun = function(W) (W - w.mean) / w.var 
-        list(w.fun=w.fun, y.fun = y.fun, oracle.fun = oracle.fun, psi = 0.58, cpsi = function(W) mean(tau), estimand='clin')
+        list(w.fun=w.fun, y.fun = y.fun, oracle.fun = oracle.fun, psi = 0.5/sqrt(pi), cpsi = function(W) mean(tau), estimand='clin')
     },
     function(X, k, sigma) {
         tau = rowMeans(cos(pi * X[,1:k] / 3))

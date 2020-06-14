@@ -70,6 +70,21 @@ minimax.weights = function(fBasis, hBasis, p, sigma=1, exact=c()) {
   result = cvx.output$getValue(gamma)
   return(result)
 }
+minimax.weights.mixed = function(fBasis, hBasis, p, group, sigma=1, exact=c()) {
+  is.exact = 1:ncol(fBasis) %in% exact
+  n = nrow(fBasis)
+  gamma = CVXR::Variable(n)
+  objective = sigma^2 * CVXR::norm2(t(gamma))^2
+  for(gg in unique(group[group > 0]))
+    objective = objective + CVXR::p_norm( hBasis[!is.exact & group==gg] - t(fBasis[,!is.exact & group==gg]) %*% gamma,p)^2
+  constraints = if(length(exact) == 0) { list() } else { list(hBasis[is.exact] == t(fBasis[,is.exact]) %*% gamma) }
+  cvx.problem = CVXR::Problem(CVXR::Minimize(objective), constraints)
+  cvx.output = solve(cvx.problem, solver = "ECOS", verbose = FALSE)
+  result = cvx.output$getValue(gamma)
+  return(result)
+}
+
+
 
 
 #crossfit.rlasso = function(Y, X, W, fold, ff) {
@@ -126,7 +141,8 @@ amle.average.derivative = function(Y, X, W, sigma,
 
 amle.cond.linear = function(Y, X, W, sigma, 
 				   p = 1, s = (ncol(X)+1)/2 + 1, order=4, 
-				   crossfit.regression=crossfit.causal.forest) {
+				   crossfit.regression=crossfit.causal.forest,
+				   simplified = FALSE) {
     fBasisX = get.basis(X, order, s)
     fBasis = cbind(fBasisX,    W*fBasisX)
     hBasis = cbind(0*fBasisX, fBasisX)
@@ -137,7 +153,9 @@ amle.cond.linear = function(Y, X, W, sigma,
     for(ff in 1:2) {
 	fBasis.aug = cbind(outcome.model$m[fold == ff], fBasis[fold == ff, ])
 	hBasis.aug = c(sum(outcome.model$tau[fold == ff]), colSums(hBasis[fold == ff,]))
-	gamma[fold == ff] = minimax.weights(fBasis.aug, hBasis.aug, p, sigma, exact=c(1,2))
+	group = rep(c(0,1,ifelse(simplified, 1, 2)), 
+		    c(1,ncol(fBasisX),ncol(fBasisX)))
+	gamma[fold == ff] = minimax.weights.mixed(fBasis.aug, hBasis.aug, p, group, sigma, exact=c(1,2,2+ncol(fBasisX)))
     }
     psi.hat = mean(outcome.model$tau + gamma * (Y-outcome.model$m))
     V.hat.sample =  mean(gamma^2 * (Y - outcome.model$m)^2)
@@ -163,8 +181,10 @@ comparison = function(X, Y, W, order=NULL, gamma.oracle = rep(1, length(W))) {
 		     amle.average.derivative(Y,X,W,1,1, crossfit.regression=crossfit.zero),
 		     amle.average.derivative(Y,X,W,1,1, crossfit.regression=crossfit.causal.forest),
 		     amle.cond.linear(Y,X,W,1,1, crossfit.regression=crossfit.zero),
-		     amle.cond.linear(Y,X,W,1,1, crossfit.regression=crossfit.causal.forest))
-    weights = c('oracle', 'grf', 'deriv', 'deriv', 'clin', 'clin')
-    outcome = c('grf',    'grf', 'none',   'grf',  'none', 'grf')
+		     amle.cond.linear(Y,X,W,1,1, crossfit.regression=crossfit.causal.forest),
+		     amle.cond.linear(Y,X,W,1,1, crossfit.regression=crossfit.zero, simplified = TRUE),
+		     amle.cond.linear(Y,X,W,1,1, crossfit.regression=crossfit.causal.forest, simplified = TRUE))
+    weights = c('oracle', 'grf', 'deriv', 'deriv', 'clin', 'clin', 'clin.simple', 'clin.simple')
+    outcome = c('grf',    'grf', 'none',   'grf',  'none', 'grf', 'none', 'grf')
     data.frame(weights = weights, outcome = outcome, estimate=sapply(estimates, c), se.sample = sapply(estimates, function(e)attr(e,'se.sample')))
 }
