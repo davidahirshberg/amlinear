@@ -15,7 +15,7 @@ residual balancing as implemented in <a href="https://github.com/swager/balanceH
 To install this package in R, run the following commands:
 ```R
 library(devtools) 
-install_github("swager/amlinear")
+install_github("davidahirshberg/amlinear")
 ```
 Example usage:
 
@@ -42,5 +42,5 @@ print(paste0("95% CI for tau: (", round(tau.hat[1] - 1.96 * tau.hat[2], 2), ", "
 #### References
 David Hirshberg and Stefan Wager.
 <b>Augmented Minimax Linear Estimation.</b>
-2017.
+<i>The Annals of Statistics</i>, 49(6), 2021.
 [<a href="http://arxiv.org/pdf/1712.00038.pdf">arxiv</a>]
