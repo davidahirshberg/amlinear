@@ -23,7 +23,7 @@ average_partial_effect = function(X, Y, W,
                                   standardize = TRUE,
                                   solver = c("ECOS", "SCS"),
                                   verbose = TRUE) {
-    
+    solver = match.arg(solver) 
     balance.method = match.arg(balance.method)
     
     if (standardize) {

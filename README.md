@@ -12,11 +12,18 @@ to be real valued). In the case where `W` is binary, then `theta` corresponds to
 treatment effect under unconfoundedness, and our AML estimator is closely related to approximate 
 residual balancing as implemented in <a href="https://github.com/swager/balanceHD">balanceHD</a>.
 
-To install this package in R, run the following commands:
+This package is incompatible with the current version of glmnet.  
+To install the most recent compatible version, run the following command.
 ```R
-library(devtools) 
-install_github("davidahirshberg/amlinear")
+devtools::install_version("glmnet", "2.0-18")
 ```
+
+To install the package itself, run the following command.
+```R
+devtools::install_github("davidahirshberg/amlinear")
+```
+
+
 Example usage:
 
 ```R
