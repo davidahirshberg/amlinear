@@ -18,6 +18,14 @@ To install the most recent compatible version, run the following command.
 devtools::install_version("glmnet", "2.0-18")
 ```
 
+It is, to some degree, incompatible with the current version of CVXR as well.
+That seems to depend on other configuration options. In any case, installing
+CVXR as follows seems to work.
+```R
+devtools::install_version("CVXR", "0.99-7")
+```
+
+
 To install the package itself, run the following command.
 ```R
 devtools::install_github("davidahirshberg/amlinear")
