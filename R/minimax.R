@@ -24,8 +24,16 @@ balance_minimax = function(X, W, zeta, solver = c("ECOS", "SCS"), verbose = TRUE
         - t(X) %*% (W * gg[1:nobs]) <= - colMeans(X) + gg[nobs + 2]
     )
     cvx.problem = CVXR::Problem(CVXR::Minimize(objective), contraints)
-    cvx.output = solve(cvx.problem, solver = solver, verbose = verbose)
-    result = cvx.output$getValue(gg)
+    # CVXR 1.8 replaced solve() and the $getValue() accessor by psolve()
+    # and value(). Support both interfaces.
+    if ("psolve" %in% getNamespaceExports("CVXR")) {
+        CVXR::psolve(cvx.problem, solver = solver, verbose = verbose)
+        result = as.numeric(CVXR::value(gg))
+    } else {
+        cvx.solve = getExportedValue("CVXR", "solve")
+        cvx.output = cvx.solve(cvx.problem, solver = solver, verbose = verbose)
+        result = as.numeric(cvx.output$getValue(gg))
+    }
     gamma = nobs * result[1:nobs]
     gamma
 }
